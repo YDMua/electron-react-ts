@@ -1,0 +1,5 @@
+node_modules/
+dist
+typings/env.d.ts
+app_dist
+electron
