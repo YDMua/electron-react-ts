@@ -11,8 +11,9 @@
   ],
   "main": "electron/electron.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development APP_ENV=dev webpack-dev-server -c config/webpack/webpack.dev.js",
+    "start:react": "cross-env NODE_ENV=development APP_ENV=dev webpack-dev-server -c config/webpack/webpack.dev.js",
     "start:electron": "node ./config/electron/build_dev.js",
+    "start:both": "concurrently \"npm run start:react\" \"wait-on http://localhost:9090 && npm run start:electron \"",
     "build:prod": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.prod.js",
     "build:mac": "node -e \"require('./config/electron/build_prod.js').build('--mac')\"",
     "build:win": "node -e \"require('./config/electron/build_prod.js').build('--win')\"",
