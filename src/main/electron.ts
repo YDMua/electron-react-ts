@@ -24,7 +24,6 @@ const createWindow = () => {
     mainWindow.loadFile(resolvePath('index.html'))
   }
 }
-
 app.whenReady().then(() => {
   ipcMain.handle('dialog:saveFile', handleSaveFile)
   ipcMain.handle('dialog:updateFile', handleUpdateFile)

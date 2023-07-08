@@ -12,10 +12,10 @@
   "main": "electron/electron.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development APP_ENV=dev webpack-dev-server -c config/webpack/webpack.dev.js",
-    "start:electron": "node ./config/electron/dev.js",
+    "start:electron": "node ./config/electron/build_dev.js",
     "build:prod": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.prod.js",
-    "build:mac": "node -e \"require('./config/electron/prod.js').build('--mac')\"",
-    "build:win": "node -e \"require('./config/electron/prod.js').build('--win')\"",
+    "build:mac": "node -e \"require('./config/electron/build_prod.js').build('--mac')\"",
+    "build:win": "node -e \"require('./config/electron/build_prod.js').build('--win')\"",
     "build:dev": "cross-env NODE_ENV=production APP_ENV=dev webpack -c config/webpack/webpack.prod.js",
     "build:analy": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.analy.js"
   },
