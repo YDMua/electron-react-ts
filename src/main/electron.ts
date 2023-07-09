@@ -1,8 +1,24 @@
+import * as dotenv from 'dotenv'
 import { BrowserWindow, app, dialog, ipcMain } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
+import AppUpdater from './libs/appUpdater'
+import Logger from './libs/logger'
 
+let logger: Logger | null
+
+const env =
+  dotenv?.config?.({ path: `.env.${process.env.APP_ENV}` })?.parsed || {}
+const isDevelopment = !app.isPackaged
+const isDebug = isDevelopment || env.DEBUG_PROD === 'true'
+
+if (isDebug) {
+  require('electron-debug')()
+}
 const createWindow = () => {
+  if (isDebug) {
+    // installExtensions()
+  }
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -16,20 +32,23 @@ const createWindow = () => {
     // frame: false,
     // resizable: false,
   })
-  const isDevelopment = !app.isPackaged
   if (isDevelopment) {
     mainWindow.loadURL('http://localhost:9090/')
     mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(resolvePath('index.html'))
+    if (!logger) {
+      logger = new Logger()
+      logger?.info('哈喽，欢迎来到蚂蚁社区，小蚁跟你问声好')
+    }
   }
+  new AppUpdater()
 }
 app.whenReady().then(() => {
   ipcMain.handle('dialog:saveFile', handleSaveFile)
   ipcMain.handle('dialog:updateFile', handleUpdateFile)
-
   createWindow()
-  app.on('activate', function () {
+  app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
@@ -37,6 +56,21 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
+
+const installExtensions = async () => {
+  const installer = require('electron-devtools-installer')
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+  const extensions = ['REACT_DEVELOPER_TOOLS']
+
+  return installer
+    .default(
+      extensions.map((name) => installer[name]),
+      forceDownload,
+    )
+    .catch((error: any) => {
+      console.log('无法安装', error)
+    })
+}
 
 const handleSaveFile = async (
   event: Electron.IpcMainInvokeEvent,

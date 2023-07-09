@@ -1,5 +1,5 @@
 {
-  "name": "electron-react-ts-base",
+  "name": "electron-react-ts",
   "version": "1.0.0",
   "description": "Electron + React + Typescript + webpack5 + antd5",
   "keywords": [
@@ -12,28 +12,31 @@
   "main": "electron/electron.js",
   "scripts": {
     "start:react": "cross-env NODE_ENV=development APP_ENV=dev webpack-dev-server -c config/webpack/webpack.dev.js",
-    "start:electron": "node ./config/electron/build_dev.js",
+    "start:electron": "cross-env NODE_ENV=development APP_ENV=dev node ./config/electron/build_dev.js",
     "start:both": "concurrently \"npm run start:react\" \"wait-on http://localhost:9090 && npm run start:electron \"",
-    "build:prod": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.prod.js",
     "build:mac": "node -e \"require('./config/electron/build_prod.js').build('--mac')\"",
     "build:win": "node -e \"require('./config/electron/build_prod.js').build('--win')\"",
-    "build:dev": "cross-env NODE_ENV=production APP_ENV=dev webpack -c config/webpack/webpack.prod.js",
-    "build:analy": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.analy.js"
+    "build:react-dev": "cross-env NODE_ENV=production APP_ENV=dev webpack -c config/webpack/webpack.prod.js",
+    "build:react-analy": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.analy.js",
+    "build:react-prod": "cross-env NODE_ENV=production APP_ENV=prod webpack -c config/webpack/webpack.prod.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YDMua/electron-react-ts-base.git"
+    "url": "git+https://github.com/YDMua/electron-react-ts.git"
   },
-  "author": "yidong",
+  "author": "蚂蚁",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/YDMua/electron-react-ts-base/issues"
+    "url": "https://github.com/YDMua/electron-react-ts/issues"
   },
-  "homepage": "https://github.com/YDMua/electron-react-ts-base#readme",
+  "homepage": "https://github.com/YDMua/electron-react-ts#readme",
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "antd": "^5.6.4",
     "classnames": "^2.3.2",
+    "electron-debug": "^3.2.0",
+    "electron-log": "^4.4.8",
+    "electron-updater": "^6.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "^6.14.1",
@@ -64,6 +67,7 @@
     "dotenv": "^16.3.1",
     "electron": "^25.2.0",
     "electron-builder": "^24.4.0",
+    "electron-devtools-installer": "^3.2.0",
     "electron-rebuild": "^3.2.9",
     "electronmon": "^2.0.2",
     "esbuild": "^0.18.11",
