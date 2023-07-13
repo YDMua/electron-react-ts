@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 import { BrowserWindow, app, dialog, ipcMain } from 'electron'
 import * as fs from 'fs'
 import * as path from 'path'
-import AppUpdater from './libs/appUpdater'
+// import AppUpdater from './libs/appUpdater'
 import Logger from './libs/logger'
 
 let logger: Logger | null
@@ -12,9 +12,9 @@ const env =
 const isDevelopment = !app.isPackaged
 const isDebug = isDevelopment || env.DEBUG_PROD === 'true'
 
-if (isDebug) {
-  require('electron-debug')()
-}
+// if (isDebug) {
+//   require('electron-debug')()
+// }
 const createWindow = () => {
   if (isDebug) {
     // installExtensions()
@@ -32,17 +32,21 @@ const createWindow = () => {
     // frame: false,
     // resizable: false,
   })
+  
+  if (!logger) {
+    // logger = new Logger({ path: publicResolvePath('logs/main.log') })
+    logger = new Logger()
+  }
+
   if (isDevelopment) {
     mainWindow.loadURL('http://localhost:9090/')
     mainWindow.webContents.openDevTools()
   } else {
-    mainWindow.loadFile(resolvePath('index.html'))
-    if (!logger) {
-      logger = new Logger()
-      logger?.info('哈喽，欢迎来到蚂蚁社区，小蚁跟你问声好')
-    }
+    const appPath = app.getAppPath()
+    const resourcePath = `file://${appPath}/dist/index.html#/home`
+    mainWindow.loadURL(resourcePath)
   }
-  new AppUpdater()
+  // new AppUpdater()
 }
 app.whenReady().then(() => {
   ipcMain.handle('dialog:saveFile', handleSaveFile)
@@ -57,20 +61,20 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer')
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS
-  const extensions = ['REACT_DEVELOPER_TOOLS']
+// const installExtensions = async () => {
+//   const installer = require('electron-devtools-installer')
+//   const forceDownload = !!process.env.UPGRADE_EXTENSIONS
+//   const extensions = ['REACT_DEVELOPER_TOOLS']
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload,
-    )
-    .catch((error: any) => {
-      console.log('无法安装', error)
-    })
-}
+//   return installer
+//     .default(
+//       extensions.map((name) => installer[name]),
+//       forceDownload,
+//     )
+//     .catch((error: any) => {
+//       console.log('无法安装', error)
+//     })
+// }
 
 const handleSaveFile = async (
   event: Electron.IpcMainInvokeEvent,
@@ -115,7 +119,7 @@ const handleUpdateFile = async (
 }
 
 /** 获取打包之后文件的真实地址 */
-const resolvePath = (resourceName: string) => {
+const publicResolvePath = (resourceName: string) => {
   const appPath = app.getAppPath()
   const resourcePath = path.join(appPath, '..', 'public', resourceName)
   return resourcePath
